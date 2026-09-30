@@ -270,28 +270,22 @@ function AuthScreen({ onAuthenticate }) {
   return (
     <main className="auth-layout">
       <section className="auth-visual">
-        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1800&q=85" alt="Warehouse shelves organized with stored inventory" />
+        <img className="auth-visual-image" src="/side.png" alt="" />
         <div className="visual-shade" />
         <a className="wordmark visual-wordmark" href="#login">
           <span className="wordmark-mark"><img className="brand-logo" src="/image.png" alt="" /></span>
           <span>BorrisStock<span className="wordmark-period">.</span></span>
         </a>
         <div className="visual-copy">
-          <span className="visual-kicker">PRODUCT MANAGEMENT / 001</span>
           <h1>Good stock.<br /><em>Clear mind.</em></h1>
-          <div className="visual-rule" />
-          <span className="visual-foot">A considered view of everything you carry.</span>
         </div>
-        <span className="visual-coordinate">14°35' N &nbsp; 120°58' E</span>
       </section>
 
       <section className="auth-panel" id="login">
         <div className="auth-panel-inner">
-          <span className="auth-index">YOUR WORKSPACE <span>01 / 01</span></span>
           <div className="auth-heading">
             <span className="auth-icon"><ShieldCheck size={20} /></span>
-            <h2>{mode === 'login' ? 'Sign in' : 'Create account'}</h2>
-            <p>{mode === 'login' ? 'Pick up where your inventory left off.' : 'Set up your inventory workspace.'}</p>
+            <h2>{mode === 'login' ? 'Sign in to BorrisStock' : 'Create your BorrisStock account'}</h2>
           </div>
 
           <form className="auth-form" onSubmit={submit}>
@@ -300,7 +294,7 @@ function AuthScreen({ onAuthenticate }) {
             <Field label="Password" name="password" type="password" placeholder="At least 8 characters" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} required minLength={8} />
             {error && <div className="form-error" role="alert">{error}</div>}
             <button className="button button-primary auth-submit" disabled={busy}>
-              {busy ? <LoaderCircle size={17} className="spin" /> : <>{mode === 'login' ? 'Sign in to workspace' : 'Create workspace'} <ArrowRight size={17} /></>}
+              {busy ? <LoaderCircle size={17} className="spin" /> : <>{mode === 'login' ? 'Sign in' : 'Create account'} <ArrowRight size={17} /></>}
             </button>
           </form>
 
@@ -310,9 +304,7 @@ function AuthScreen({ onAuthenticate }) {
               {mode === 'login' ? 'Create an account' : 'Sign in'}
             </button>
           </div>
-          <div className="auth-security"><ShieldCheck size={14} /> Protected by LavaLust token authentication</div>
         </div>
-        <span className="auth-copyright">BORRISSTOCK INVENTORY SYSTEM <span>© 2026</span></span>
       </section>
     </main>
   );
