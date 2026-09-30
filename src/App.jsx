@@ -133,7 +133,7 @@ export default function App() {
     <main className="workspace">
       <header className="topbar">
         <a className="wordmark" href="#inventory" aria-label="BorrisStock home">
-          <span className="wordmark-mark"><Boxes size={18} strokeWidth={2.2} /></span>
+          <span className="wordmark-mark"><img className="brand-logo" src="/image.png" alt="" /></span>
           <span>BorrisStock<span className="wordmark-period">.</span></span>
         </a>
         <div className="topbar-right">
@@ -273,7 +273,7 @@ function AuthScreen({ onAuthenticate }) {
         <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1800&q=85" alt="Warehouse shelves organized with stored inventory" />
         <div className="visual-shade" />
         <a className="wordmark visual-wordmark" href="#login">
-          <span className="wordmark-mark"><Boxes size={18} /></span>
+          <span className="wordmark-mark"><img className="brand-logo" src="/image.png" alt="" /></span>
           <span>BorrisStock<span className="wordmark-period">.</span></span>
         </a>
         <div className="visual-copy">

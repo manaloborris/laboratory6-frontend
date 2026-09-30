@@ -31,7 +31,8 @@ button:disabled { cursor: wait; opacity: .65; }
 .workspace { min-height: 100vh; background-color: var(--canvas); background-image: radial-gradient(#daddd3 0.65px, transparent 0.65px); background-size: 16px 16px; animation: appear .5s ease-out both; }
 .topbar { height: 72px; padding: 0 clamp(20px, 5.5vw, 84px); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(32, 37, 31, .11); background: rgba(255, 254, 250, .83); }
 .wordmark { display: inline-flex; gap: 10px; align-items: center; color: var(--ink); text-decoration: none; font-family: var(--display); font-weight: 700; font-size: 19px; }
-.wordmark-mark { width: 30px; height: 30px; display: grid; place-items: center; color: white; background: var(--green); border-radius: 8px; }
+.wordmark-mark { width: 36px; height: 36px; flex: 0 0 auto; display: grid; place-items: center; overflow: hidden; padding: 2px; background: white; border: 1px solid rgba(32, 37, 31, .1); border-radius: 7px; }
+.brand-logo { display: block; width: 100%; height: 100%; object-fit: contain; border-radius: 4px; }
 .wordmark-period { color: #e57b54; }
 .topbar-right, .account-chip, .row-actions { display: flex; align-items: center; }
 .topbar-right { gap: 16px; }
@@ -185,7 +186,7 @@ h1, h2, p { margin-top: 0; }
 @media (max-width: 680px) {
   .auth-layout { min-height: 100svh; display: block; background: var(--paper); }
   .auth-visual { min-height: 225px; height: 30svh; padding: 20px 22px; }
-  .visual-wordmark .wordmark-mark { width: 27px; height: 27px; }
+  .visual-wordmark .wordmark-mark { width: 29px; height: 29px; }
   .visual-wordmark { font-size: 17px; }
   .visual-copy { padding-bottom: 3px; }
   .visual-copy h1 { margin: 9px 0 0; font-size: 37px; line-height: .98; }
@@ -198,7 +199,7 @@ h1, h2, p { margin-top: 0; }
   .auth-copyright { right: 23px; bottom: 17px; left: 23px; }
   .topbar { height: 62px; padding: 0 17px; }
   .wordmark { gap: 8px; font-size: 17px; }
-  .wordmark-mark { width: 28px; height: 28px; }
+  .wordmark-mark { width: 31px; height: 31px; }
   .account-chip { gap: 7px; }
   .account-name { max-width: 115px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .topbar-right { gap: 10px; }
