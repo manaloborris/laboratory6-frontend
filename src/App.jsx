@@ -4,11 +4,11 @@ import {
   ArrowRight,
   Boxes,
   Check,
-  CircleDollarSign,
   LoaderCircle,
   LogOut,
   PackageOpen,
   Pencil,
+  PhilippinePeso,
   Plus,
   Search,
   ShieldCheck,
@@ -162,7 +162,7 @@ export default function App() {
         <section className="metrics" aria-label="Inventory summary">
           <Metric icon={<PackageOpen size={18} />} label="Catalog items" value={products.length.toLocaleString()} index="01" />
           <Metric icon={<Boxes size={18} />} label="Units in stock" value={totalUnits.toLocaleString()} index="02" />
-          <Metric icon={<CircleDollarSign size={18} />} label="Stock value" value={money.format(inventoryValue)} index="03" />
+          <Metric icon={<PhilippinePeso size={18} />} label="Stock value" value={money.format(inventoryValue)} index="03" />
         </section>
 
         <section className="catalog-section">
