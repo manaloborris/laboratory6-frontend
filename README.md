@@ -1,4 +1,4 @@
-# Stockroom Frontend
+# BorrisStock Frontend
 
 React/Vite client for the LavaLust product API. It never connects to MySQL directly.
 

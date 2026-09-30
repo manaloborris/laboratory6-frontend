@@ -132,9 +132,9 @@ export default function App() {
   return (
     <main className="workspace">
       <header className="topbar">
-        <a className="wordmark" href="#inventory" aria-label="Stockroom home">
+        <a className="wordmark" href="#inventory" aria-label="BorrisStock home">
           <span className="wordmark-mark"><Boxes size={18} strokeWidth={2.2} /></span>
-          <span>stockroom<span className="wordmark-period">.</span></span>
+          <span>BorrisStock<span className="wordmark-period">.</span></span>
         </a>
         <div className="topbar-right">
           <div className="account-chip">
@@ -274,7 +274,7 @@ function AuthScreen({ onAuthenticate }) {
         <div className="visual-shade" />
         <a className="wordmark visual-wordmark" href="#login">
           <span className="wordmark-mark"><Boxes size={18} /></span>
-          <span>stockroom<span className="wordmark-period">.</span></span>
+          <span>BorrisStock<span className="wordmark-period">.</span></span>
         </a>
         <div className="visual-copy">
           <span className="visual-kicker">PRODUCT MANAGEMENT / 001</span>
@@ -305,14 +305,14 @@ function AuthScreen({ onAuthenticate }) {
           </form>
 
           <div className="auth-switch">
-            <span>{mode === 'login' ? 'New to Stockroom?' : 'Already have an account?'}</span>
+            <span>{mode === 'login' ? 'New to BorrisStock?' : 'Already have an account?'}</span>
             <button onClick={() => { setMode(mode === 'login' ? 'register' : 'login'); setError(''); }}>
               {mode === 'login' ? 'Create an account' : 'Sign in'}
             </button>
           </div>
           <div className="auth-security"><ShieldCheck size={14} /> Protected by LavaLust token authentication</div>
         </div>
-        <span className="auth-copyright">STOCKROOM INVENTORY SYSTEM <span>© 2026</span></span>
+        <span className="auth-copyright">BORRISSTOCK INVENTORY SYSTEM <span>© 2026</span></span>
       </section>
     </main>
   );
