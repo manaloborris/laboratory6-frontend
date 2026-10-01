@@ -141,7 +141,7 @@ h1, h2, p { margin-top: 0; }
 .field textarea { min-height: 83px; padding: 10px 12px; resize: vertical; }
 .field input::placeholder, .field textarea::placeholder { color: #a2a69d; }
 .field input:focus, .field textarea:focus { outline: 0; box-shadow: inset 2px 2px 5px #c5cbd5, inset -2px -2px 5px #ffffff, 0 0 0 2px rgba(195, 40, 56, .55); }
-.auth-submit { width: 100%; min-height: 46px; justify-content: space-between; margin-top: 4px; padding: 0 15px; }
+.auth-submit { width: 100%; min-height: 46px; justify-content: center; margin-top: 4px; padding: 0 15px; }
 .auth-submit svg:first-child:last-child { margin-inline: auto; }
 .auth-switch { display: flex; justify-content: center; gap: 5px; margin-top: 23px; color: #7b8077; font-size: 12px; }
 .auth-switch button { padding: 0; border: 0; color: var(--accent-dark); background: none; font-size: 12px; font-weight: 700; cursor: pointer; }
