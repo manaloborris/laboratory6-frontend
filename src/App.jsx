@@ -199,6 +199,7 @@ export default function App() {
   const allProductsView = view === 'products';
   const displayedProducts = allProductsView ? filteredProducts : filteredProducts.slice(0, 5);
   const totalUnits = products.reduce((total, product) => total + Number(product.quantity), 0);
+  const averageUnitsPerProduct = products.length ? totalUnits / products.length : 0;
   const inventoryValue = products.reduce(
     (total, product) => total + Number(product.price) * Number(product.quantity),
     0,
@@ -237,7 +238,7 @@ export default function App() {
         {!allProductsView && (
           <section className="metrics" aria-label="Inventory summary">
             <Metric icon={<PackageOpen size={18} />} label="Catalog items" value={products.length.toLocaleString()} index="01" />
-            <Metric icon={<Boxes size={18} />} label="Units per stock" value={totalUnits.toLocaleString()} index="02" />
+            <Metric icon={<Boxes size={18} />} label="Avg. units per product" value={averageUnitsPerProduct.toLocaleString('en-PH', { maximumFractionDigits: 1 })} index="02" />
             <Metric icon={<PhilippinePeso size={18} />} label="Stock value" value={money.format(inventoryValue)} index="03" />
           </section>
         )}
@@ -258,7 +259,7 @@ export default function App() {
                 <button className="button button-quiet view-all-button" onClick={() => { window.location.hash = '/'; }}>
                   <ArrowLeft size={15} /> Overview
                 </button>
-              ) : products.length > 5 && (
+              ) : (
                 <button className="button button-quiet view-all-button" onClick={() => { window.location.hash = '/products'; }}>
                   See all products <ArrowRight size={15} />
                 </button>
