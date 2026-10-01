@@ -15,7 +15,7 @@ import {
   Trash2,
   X,
 } from 'lucide-react';
-import { api, clearTokens, setTokens } from './api.js';
+import { api, clearTokens, getStoredUser, setStoredUser, setTokens } from './api.js';
 
 const money = new Intl.NumberFormat('en-PH', {
   style: 'currency',
@@ -24,7 +24,7 @@ const money = new Intl.NumberFormat('en-PH', {
 });
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(getStoredUser);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
@@ -43,6 +43,7 @@ export default function App() {
     } catch (error) {
       if (error.status === 401) {
         clearTokens();
+        setStoredUser(null);
         setUser(null);
       } else {
         setLoadError(error.message);
@@ -65,6 +66,7 @@ export default function App() {
   async function authenticate(mode, values) {
     const result = mode === 'register' ? await api.register(values) : await api.login(values);
     setTokens(result.tokens);
+    setStoredUser(result.user);
     setUser(result.user);
     setNotice(mode === 'register' ? 'Your account is ready.' : 'Welcome back.');
   }
@@ -77,6 +79,7 @@ export default function App() {
       clearTokens();
     } finally {
       clearTokens();
+      setStoredUser(null);
       setUser(null);
       setProducts([]);
       setBusy(false);

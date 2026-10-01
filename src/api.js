@@ -1,16 +1,56 @@
 const API_URL = (import.meta.env.VITE_API_URL || 'http://localhost:8080').replace(/\/$/, '');
 
-let accessToken = '';
-let refreshToken = '';
+const sessionKey = {
+  accessToken: 'borrisstock_access_token',
+  refreshToken: 'borrisstock_refresh_token',
+  user: 'borrisstock_user',
+};
+
+function readSessionValue(key) {
+  try {
+    return window.sessionStorage.getItem(key) || '';
+  } catch {
+    return '';
+  }
+}
+
+function writeSessionValue(key, value) {
+  try {
+    if (value) window.sessionStorage.setItem(key, value);
+    else window.sessionStorage.removeItem(key);
+  } catch {
+    return;
+  }
+}
+
+let accessToken = readSessionValue(sessionKey.accessToken);
+let refreshToken = readSessionValue(sessionKey.refreshToken);
 
 export function setTokens(tokens) {
   accessToken = tokens?.access_token || '';
   refreshToken = tokens?.refresh_token || '';
+  writeSessionValue(sessionKey.accessToken, accessToken);
+  writeSessionValue(sessionKey.refreshToken, refreshToken);
 }
 
 export function clearTokens() {
   accessToken = '';
   refreshToken = '';
+  writeSessionValue(sessionKey.accessToken, '');
+  writeSessionValue(sessionKey.refreshToken, '');
+  writeSessionValue(sessionKey.user, '');
+}
+
+export function setStoredUser(user) {
+  writeSessionValue(sessionKey.user, user ? JSON.stringify(user) : '');
+}
+
+export function getStoredUser() {
+  try {
+    return JSON.parse(readSessionValue(sessionKey.user) || 'null');
+  } catch {
+    return null;
+  }
 }
 
 async function send(path, options = {}, mayRefresh = true) {
