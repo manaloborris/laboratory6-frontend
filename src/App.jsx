@@ -316,11 +316,11 @@ function AuthScreen({ onAuthenticate }) {
 
           <form className="auth-form" onSubmit={submit}>
             {mode === 'register' && <Field label="Username" name="username" placeholder="Your name" autoComplete="username" required maxLength={100} />}
-            <Field label="Email address" name="email" type="email" placeholder="you@company.com" autoComplete="email" required maxLength={255} />
+            <Field label="Email address" name="email" type="email" placeholder="your@gmail.com" autoComplete="email" required maxLength={255} />
             <Field label="Password" name="password" type="password" placeholder="At least 8 characters" autoComplete={mode === 'login' ? 'current-password' : 'new-password'} required minLength={8} />
             {error && <div className="form-error" role="alert">{error}</div>}
             <button className="button button-primary auth-submit" disabled={busy}>
-              {busy ? <LoaderCircle size={17} className="spin" /> : <>{mode === 'login' ? 'Sign in' : 'Create account'} <ArrowRight size={17} /></>}
+              {busy ? <LoaderCircle size={17} className="spin" /> : <span className="auth-submit-content">{mode === 'login' ? 'Sign in' : 'Create account'} <ArrowRight size={17} /></span>}
             </button>
           </form>
 
