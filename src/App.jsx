@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
+  ArrowLeft,
   ArrowDownUp,
   ArrowRight,
   Boxes,
   Check,
   LoaderCircle,
   LogOut,
+  Minus,
   PackageOpen,
   Pencil,
   PhilippinePeso,
@@ -25,12 +27,14 @@ const money = new Intl.NumberFormat('en-PH', {
 
 export default function App() {
   const [user, setUser] = useState(getStoredUser);
+  const [view, setView] = useState(() => window.location.hash === '#/products' ? 'products' : 'overview');
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [query, setQuery] = useState('');
   const [editor, setEditor] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
+  const [quantityDrafts, setQuantityDrafts] = useState({});
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState('');
 
@@ -56,6 +60,15 @@ export default function App() {
   useEffect(() => {
     if (user) loadProducts();
   }, [user]);
+
+  useEffect(() => {
+    function syncView() {
+      setView(window.location.hash === '#/products' ? 'products' : 'overview');
+    }
+
+    window.addEventListener('hashchange', syncView);
+    return () => window.removeEventListener('hashchange', syncView);
+  }, []);
 
   useEffect(() => {
     if (!notice) return undefined;
@@ -143,12 +156,48 @@ export default function App() {
     }
   }
 
+  function adjustQuantity(product, amount) {
+    const current = Number(quantityDrafts[product.id] ?? product.quantity);
+    const next = Math.max(0, Math.min(2147483647, current + amount));
+    setQuantityDrafts((drafts) => ({ ...drafts, [product.id]: next }));
+  }
+
+  async function saveQuantity(product) {
+    const quantity = Number(quantityDrafts[product.id]);
+    if (!Number.isInteger(quantity) || quantity < 0 || quantity === Number(product.quantity)) return;
+
+    setBusy(true);
+    try {
+      await api.updateProduct(product.id, {
+        product_name: product.product_name,
+        description: product.description || '',
+        price: Number(product.price).toFixed(2),
+        quantity,
+      });
+      setProducts((current) => current.map((item) => (
+        item.id === product.id ? { ...item, quantity } : item
+      )));
+      setQuantityDrafts((drafts) => {
+        const next = { ...drafts };
+        delete next[product.id];
+        return next;
+      });
+      setNotice('Stock quantity saved.');
+    } catch (error) {
+      setNotice(error.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (!user) return <AuthScreen onAuthenticate={authenticate} />;
 
   const searchTerm = query.trim().toLowerCase();
   const filteredProducts = products.filter((product) =>
     `${product.product_name} ${product.description || ''}`.toLowerCase().includes(searchTerm),
   );
+  const allProductsView = view === 'products';
+  const displayedProducts = allProductsView ? filteredProducts : filteredProducts.slice(0, 5);
   const totalUnits = products.reduce((total, product) => total + Number(product.quantity), 0);
   const inventoryValue = products.reduce(
     (total, product) => total + Number(product.price) * Number(product.quantity),
@@ -158,7 +207,7 @@ export default function App() {
   return (
     <main className="workspace">
       <header className="topbar">
-        <a className="wordmark" href="#inventory" aria-label="BorrisStock home">
+        <a className="wordmark" href="#/" aria-label="BorrisStock home">
           <span className="wordmark-mark"><img className="brand-logo" src="/image.png" alt="" /></span>
           <span>BorrisStock<span className="wordmark-period">.</span></span>
         </a>
@@ -176,8 +225,8 @@ export default function App() {
       <section className="page-content" id="inventory">
         <div className="page-heading">
           <div>
-            <div className="eyebrow"><span className="live-dot" /> INVENTORY / OVERVIEW</div>
-            <h1>Products</h1>
+            <div className="eyebrow"><span className="live-dot" /> INVENTORY / {allProductsView ? 'ALL PRODUCTS' : 'OVERVIEW'}</div>
+            <h1>{allProductsView ? 'All products' : 'Products'}</h1>
             <p className="heading-caption">{products.length} {products.length === 1 ? 'item' : 'items'} in your catalog</p>
           </div>
           <button className="button button-primary" onClick={() => setEditor({})}>
@@ -185,23 +234,36 @@ export default function App() {
           </button>
         </div>
 
-        <section className="metrics" aria-label="Inventory summary">
-          <Metric icon={<PackageOpen size={18} />} label="Catalog items" value={products.length.toLocaleString()} index="01" />
-          <Metric icon={<Boxes size={18} />} label="Units in stock" value={totalUnits.toLocaleString()} index="02" />
-          <Metric icon={<PhilippinePeso size={18} />} label="Stock value" value={money.format(inventoryValue)} index="03" />
-        </section>
+        {!allProductsView && (
+          <section className="metrics" aria-label="Inventory summary">
+            <Metric icon={<PackageOpen size={18} />} label="Catalog items" value={products.length.toLocaleString()} index="01" />
+            <Metric icon={<Boxes size={18} />} label="Units per stock" value={totalUnits.toLocaleString()} index="02" />
+            <Metric icon={<PhilippinePeso size={18} />} label="Stock value" value={money.format(inventoryValue)} index="03" />
+          </section>
+        )}
 
         <section className="catalog-section">
           <div className="catalog-toolbar">
             <div className="catalog-title">
-              <h2>All products</h2>
+              <h2>{allProductsView ? 'All products' : 'Recent products'}</h2>
               <span className="count-pill">{filteredProducts.length}</span>
             </div>
-            <label className="search-field">
-              <Search size={16} aria-hidden="true" />
-              <input id="product-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" />
-              <kbd>/</kbd>
-            </label>
+            <div className="catalog-controls">
+              <label className="search-field">
+                <Search size={16} aria-hidden="true" />
+                <input id="product-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" />
+                <kbd>/</kbd>
+              </label>
+              {allProductsView ? (
+                <button className="button button-quiet view-all-button" onClick={() => { window.location.hash = '/'; }}>
+                  <ArrowLeft size={15} /> Overview
+                </button>
+              ) : products.length > 5 && (
+                <button className="button button-quiet view-all-button" onClick={() => { window.location.hash = '/products'; }}>
+                  See all products <ArrowRight size={15} />
+                </button>
+              )}
+            </div>
           </div>
 
           {loadError && <div className="inline-error" role="alert">{loadError}<button onClick={loadProducts}>Try again</button></div>}
@@ -219,7 +281,11 @@ export default function App() {
               <tbody>
                 {loading ? (
                   <tr><td colSpan="5" className="table-message"><LoaderCircle className="spin" size={19} /> Loading inventory</td></tr>
-                ) : filteredProducts.length ? filteredProducts.map((product) => (
+                ) : displayedProducts.length ? displayedProducts.map((product) => {
+                  const quantity = Number(quantityDrafts[product.id] ?? product.quantity);
+                  const quantityChanged = quantityDrafts[product.id] !== undefined && quantity !== Number(product.quantity);
+
+                  return (
                   <tr key={product.id}>
                     <td data-label="Product">
                       <div className="product-cell">
@@ -231,7 +297,14 @@ export default function App() {
                       </div>
                     </td>
                     <td data-label="Price" className="price-cell">{money.format(Number(product.price))}</td>
-                    <td data-label="Quantity"><span className="quantity-value">{Number(product.quantity).toLocaleString()} <span>units</span></span></td>
+                    <td data-label="Units per stock">
+                      <div className="stock-adjuster">
+                        <button type="button" className="stock-stepper" onClick={() => adjustQuantity(product, -1)} disabled={busy || quantity <= 0} title={`Remove one ${product.product_name}`} aria-label={`Remove one ${product.product_name}`}><Minus size={14} /></button>
+                        <strong className="stock-count">{quantity.toLocaleString()}</strong>
+                        <button type="button" className="stock-stepper" onClick={() => adjustQuantity(product, 1)} disabled={busy || quantity >= 2147483647} title={`Add one ${product.product_name}`} aria-label={`Add one ${product.product_name}`}><Plus size={14} /></button>
+                        <button type="button" className="stock-save" onClick={() => saveQuantity(product)} disabled={busy || !quantityChanged} title={`Save stock for ${product.product_name}`} aria-label={`Save stock for ${product.product_name}`}><Check size={14} /><span>Save</span></button>
+                      </div>
+                    </td>
                     <td data-label="Status"><StockStatus quantity={Number(product.quantity)} /></td>
                     <td data-label="Actions">
                       <div className="row-actions">
@@ -244,7 +317,8 @@ export default function App() {
                       </div>
                     </td>
                   </tr>
-                )) : (
+                  );
+                }) : (
                   <tr>
                     <td colSpan="5">
                       <div className="empty-state">
@@ -261,7 +335,7 @@ export default function App() {
           </div>
           <footer className="table-footer">
             <span><ShieldCheck size={14} /> Synced with LavaLust API</span>
-            <span>{filteredProducts.length} shown</span>
+            <span>{displayedProducts.length} shown{!allProductsView && filteredProducts.length > 5 ? ` of ${filteredProducts.length}` : ''}</span>
           </footer>
         </section>
       </section>
@@ -372,8 +446,6 @@ function ProductDialog({ product, busy, onClose, onSave }) {
   return (
     <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="dialog-frame">
-        <span className="dialog-web dialog-web-start" aria-hidden="true" />
-        <span className="dialog-web dialog-web-end" aria-hidden="true" />
         <section className="dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title">
         <div className="dialog-heading">
           <div><span className="dialog-kicker">CATALOG / PRODUCT</span><h2 id="product-dialog-title">{product ? 'Edit product' : 'Add product'}</h2></div>
@@ -401,8 +473,6 @@ function DeleteDialog({ product, busy, onClose, onDelete }) {
   return (
     <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
       <div className="dialog-frame dialog-frame-delete">
-        <span className="dialog-web dialog-web-start" aria-hidden="true" />
-        <span className="dialog-web dialog-web-end" aria-hidden="true" />
         <section className="dialog delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
         <span className="delete-icon"><Trash2 size={19} /></span>
         <span className="dialog-kicker">REMOVE FROM CATALOG</span>
