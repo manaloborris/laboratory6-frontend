@@ -63,6 +63,29 @@ export default function App() {
     return () => window.clearTimeout(timeout);
   }, [notice]);
 
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (event.key === 'Escape') {
+        setEditor(null);
+        setDeleteTarget(null);
+        return;
+      }
+
+      const target = event.target;
+      const typing = target instanceof HTMLElement && (
+        target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)
+      );
+
+      if (event.key === '/' && user && !typing) {
+        event.preventDefault();
+        document.getElementById('product-search')?.focus();
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [user]);
+
   async function authenticate(mode, values) {
     const result = mode === 'register' ? await api.register(values) : await api.login(values);
     setTokens(result.tokens);
@@ -176,7 +199,7 @@ export default function App() {
             </div>
             <label className="search-field">
               <Search size={16} aria-hidden="true" />
-              <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" />
+              <input id="product-search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" aria-label="Search products" />
               <kbd>/</kbd>
             </label>
           </div>
