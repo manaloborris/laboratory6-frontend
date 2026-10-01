@@ -371,7 +371,10 @@ function ProductDialog({ product, busy, onClose, onSave }) {
 
   return (
     <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title">
+      <div className="dialog-frame">
+        <span className="dialog-web dialog-web-start" aria-hidden="true" />
+        <span className="dialog-web dialog-web-end" aria-hidden="true" />
+        <section className="dialog" role="dialog" aria-modal="true" aria-labelledby="product-dialog-title">
         <div className="dialog-heading">
           <div><span className="dialog-kicker">CATALOG / PRODUCT</span><h2 id="product-dialog-title">{product ? 'Edit product' : 'Add product'}</h2></div>
           <button className="icon-button" onClick={onClose} title="Close" aria-label="Close dialog"><X size={18} /></button>
@@ -388,7 +391,8 @@ function ProductDialog({ product, busy, onClose, onSave }) {
             <button className="button button-primary" disabled={busy}>{busy ? <LoaderCircle size={16} className="spin" /> : <Check size={16} />}{product ? 'Save changes' : 'Add to inventory'}</button>
           </div>
         </form>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
@@ -396,7 +400,10 @@ function ProductDialog({ product, busy, onClose, onSave }) {
 function DeleteDialog({ product, busy, onClose, onDelete }) {
   return (
     <div className="modal-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <section className="dialog delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
+      <div className="dialog-frame dialog-frame-delete">
+        <span className="dialog-web dialog-web-start" aria-hidden="true" />
+        <span className="dialog-web dialog-web-end" aria-hidden="true" />
+        <section className="dialog delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-title">
         <span className="delete-icon"><Trash2 size={19} /></span>
         <span className="dialog-kicker">REMOVE FROM CATALOG</span>
         <h2 id="delete-title">Delete this product?</h2>
@@ -405,7 +412,8 @@ function DeleteDialog({ product, busy, onClose, onDelete }) {
           <button className="button button-quiet" onClick={onClose} disabled={busy}>Keep product</button>
           <button className="button button-danger" onClick={onDelete} disabled={busy}>{busy ? <LoaderCircle size={16} className="spin" /> : <Trash2 size={16} />}Delete product</button>
         </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 }
